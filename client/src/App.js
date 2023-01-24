@@ -4,8 +4,8 @@ import io from 'socket.io-client'
 
 function App() {
   const socket = useRef();
-  const [counter, setCounter] = useState(0);
 
+  // Establish the socket connection when the site is first loaded
   useEffect(() => {
     if (!socket.current) {
       socket.current = io('//:3001/');
@@ -13,16 +13,16 @@ function App() {
     }
   }, []);
 
+  // Request a list of possible rooms from the server when the button is clicked
   const buttonHandler = () => {
-    setCounter(counter + 1);
-    console.log("Button click!");
-
     if (socket.current) {
-      socket.current.emit('add_score', counter);
-      console.log("Sent counter");
+      socket.current.emit('get_rooms', (rooms) => {
+        console.log(rooms);
+      });
     }
   }
 
+  // WIP: For now just testing server functionality - proper UI to come later
   return (
     <div>
       <h1>Hi!</h1>
