@@ -34,7 +34,6 @@ const http = __importStar(require("http"));
 const SocketEvents_1 = require("./SocketEvents");
 const database_1 = require("./database");
 const uuid_1 = require("uuid");
-const mongodb_1 = require("mongodb");
 dotenv_1.default.config();
 const port = process.env.PORT || 3001;
 const endpoint = process.env.DB_ENDPOINT || "mongodb://localhost:27017";
@@ -51,19 +50,24 @@ const io = new socket_io_1.Server(server, {
         methods: ['GET', 'POST']
     }
 });
-// Setup database connections
-const database = new database_1.DataBase((0, uuid_1.v4)(), endpoint, databaseName);
-const testScores = [{
-        _id: new mongodb_1.ObjectId(),
-        name: "John",
-        scores: [3, 1, 5]
-    }];
-database.addScores(testScores);
-database.listCollections();
 // Handle socket.io connections
 io.on(SocketEvents_1.SocketEvents.connection, (socket) => {
-    console.log("A user has connected");
+    console.log("A user has connected!");
+    // Setup database connections
+    console.log(`Attempting to connect to ${endpoint}...`);
+    const database = new database_1.DataBase(endpoint, databaseName, (0, uuid_1.v4)());
+    console.log("Connected to database!");
+    socket.on(SocketEvents_1.SocketEvents.joinRoom, (room, callback) => {
+        // Leave the previous room
+        socket.leave(database.currentRoom);
+        console.log(`User wishes to join room: ${room}`);
+        socket.join(room);
+        database.setRoom(room);
+    });
+    socket.on(SocketEvents_1.SocketEvents.update, () => {
+        database.listRooms();
+    });
 });
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });

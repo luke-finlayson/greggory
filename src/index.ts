@@ -28,18 +28,30 @@ const io = new Server(server, {
     }
 });
 
-// Setup database connections
-const database = new DataBase(uuid(), endpoint, databaseName);
-
 // Handle socket.io connections
 io.on(SocketEvents.connection, (socket: Socket) => {
-    console.log("A user has connected");
+    console.log("A user has connected!");
 
-    socket.on(SocketEvents.joinRoom, (room: string, callback: CallableFunction) => {
+    // Setup database connections
+    console.log(`Attempting to connect to ${endpoint}...`);
+    const database = new DataBase(endpoint, databaseName, uuid());
+    console.log("Connected to database!");
+
+    socket.on(SocketEvents.joinRoom, (room: string) => {
+        // Leave the previous room
+        socket.leave(database.currentRoom);
+
         console.log(`User wishes to join room: ${room}`);
+
+        socket.join(room);
+        database.setRoom(room);
+    });
+
+    socket.on(SocketEvents.update, () => {
+        database.listRooms();
     });
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });

@@ -1,25 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import e from "express";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { v4 as uuid } from "uuid";
+import Button from "./components/Button";
+import { SocketEvents } from "./utils/SocketEvents";
 
 function App() {
+  const socket = useRef<Socket>();
+  const [room, setRoom] = useState<string>();
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    if (!socket.current) {
+      socket.current = io('//:3001');
+    }
+  }, []);
+
+  const createRoom = () => setRoom(uuid());
+
+  const joinRoom = () => {
+    if (socket.current?.connected) {
+      socket.current.emit(SocketEvents.joinRoom, room);
+    }
+    else {
+      setError("Unable to join room - disconnected from server");
+    }
+  }
+
+  const updateRooms = () => {
+    if (socket.current?.connected) {
+      socket.current.emit(SocketEvents.update);
+    }
+    else {
+      setError("Update failed - disconnected from server");
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <p className="error">{error}</p>
+
+      <h1 className="text-xl">This. Is. Greggory.</h1>
+
+      <button type="button" onClick={updateRooms}>Update</button>
+
+      <br/>
+
+      <p>Current room: {room}</p>
+      <div className="flex items-center space-x-3">
+        <Button onClick={createRoom}>Create</Button>
+        <Button onClick={joinRoom}>Join</Button>
+      </div>
+    </Fragment>
   );
 }
 

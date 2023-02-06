@@ -5,12 +5,12 @@ import { Player } from "./types";
  * Provides a connection to 
  */
 export class DataBase {
-    name: string;
+    currentRoom: string;
     client: MongoClient;
     databaseName: string;
 
-    constructor (name: string, endpoint: string, databaseName: string) {
-        this.name = name;
+    constructor (endpoint: string, databaseName: string, room: string) {
+        this.currentRoom = room;
         this.databaseName = databaseName;
         this.client = new MongoClient(endpoint);
     }
@@ -24,7 +24,7 @@ export class DataBase {
             await this.client.connect();
             const db = this.client.db(this.databaseName);
 
-            const result = await db.collection(this.name).insertMany(scores);
+            const result = await db.collection(this.currentRoom).insertMany(scores);
             console.log("\nInserted new document:");
             console.log(result);
         }
@@ -45,7 +45,7 @@ export class DataBase {
             const db = this.client.db(this.databaseName);
 
             const result = await db.collections();
-            
+            console.log(result);
         }
         catch (err) {
             console.error(err);
@@ -57,18 +57,18 @@ export class DataBase {
 
     /**
      * Delete a room and all its data from the database
-     * @param roomName The name of the room to delete
+     * @param room The name of the room to delete
      * @returns True if the room was deleted successfully
      */
-    deleteRoom = async (roomName: string): Promise<boolean> => {
+    deleteRoom = async (room: string): Promise<boolean> => {
         let result = false;
 
         try {
             await this.client.connect();
             const db = this.client.db(this.databaseName);
 
-            result = await db.dropCollection(roomName);
-            console.log(`Deleted room: ${roomName}`);
+            result = await db.dropCollection(room);
+            console.log(`Deleted room: ${room}`);
         }
         catch (err) {
             console.error(err);
@@ -78,4 +78,11 @@ export class DataBase {
             return result;
         }
     }
+
+    /**
+     * Switch to a different target room
+     * @param room The new room to modify
+     * @returns 
+     */
+    setRoom = (room: string) => this.currentRoom = room;
 }
