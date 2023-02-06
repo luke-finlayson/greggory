@@ -1,16 +1,30 @@
 {
-  "name": "greggory",
+  "name": "greggoryV2",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node server/index.js"
+    "build": "tsc",
+    "develop": "yarn build && concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
+    "start": "yarn build && node dist/index.js"
   },
   "dependencies": {
+    "@types/mongodb": "^4.0.7",
+    "@types/socket.io": "^3.0.2",
+    "@types/uuid": "^9.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongodb": "^4.13.0",
+    "mongodb": "^5.0.0",
     "socket.io": "^4.5.4",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.11.19",
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.20",
+    "typescript": "^4.9.5"
   }
 }
