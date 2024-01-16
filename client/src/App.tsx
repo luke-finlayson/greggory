@@ -1,7 +1,7 @@
 import e from "express";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { v4 as uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import Button from "./components/Button";
 import { SocketEvents } from "./utils/SocketEvents";
 
@@ -16,7 +16,7 @@ function App() {
     }
   }, []);
 
-  const createRoom = () => setRoom(uuid());
+  const createRoom = () => setRoom(uuidv4());
 
   const joinRoom = () => {
     if (socket.current?.connected) {
