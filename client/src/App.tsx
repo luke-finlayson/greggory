@@ -16,13 +16,17 @@ function App() {
     }
   }, []);
 
-  const createRoom = () => setRoom(uuidv4());
+  const createRoom = () => {
+    setError("")
+    setRoom(uuidv4());
+  }
 
   const joinRoom = () => {
     if (socket.current?.connected) {
       socket.current.emit(SocketEvents.joinRoom, room);
     } else {
       setError("Unable to join room - disconnected from server");
+
     }
   };
 
@@ -36,11 +40,11 @@ function App() {
 
   return (
     <Fragment>
-      <div className=" bg-gregory-pink-0 h-[100vh]  ">
+      <div className=" bg-greggory-pink-0 h-[100vh]  ">
         <div className=" text-center">
           <p className="error">{error}</p>
 
-          <h1 className="text-xl">This. Is. Greggory.</h1>
+          <h1 className="pt-[30px] pb-[30px] text-6xl font-gregory-title text-greggory-grey-0 font-extrabold">This. Is. Greggory.</h1>
 
           <button type="button" onClick={updateRooms}>
             Update
