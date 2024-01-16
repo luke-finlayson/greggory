@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     if (!socket.current) {
-      socket.current = io('//:3001');
+      socket.current = io("//:3001");
     }
   }, []);
 
@@ -21,35 +21,39 @@ function App() {
   const joinRoom = () => {
     if (socket.current?.connected) {
       socket.current.emit(SocketEvents.joinRoom, room);
-    }
-    else {
+    } else {
       setError("Unable to join room - disconnected from server");
     }
-  }
+  };
 
   const updateRooms = () => {
     if (socket.current?.connected) {
       socket.current.emit(SocketEvents.update);
-    }
-    else {
+    } else {
       setError("Update failed - disconnected from server");
     }
-  }
+  };
 
   return (
     <Fragment>
-      <p className="error">{error}</p>
+      <div className=" bg-gregory-pink-0 h-[100vh]  ">
+        <div className=" text-center">
+          <p className="error">{error}</p>
 
-      <h1 className="text-xl">This. Is. Greggory.</h1>
+          <h1 className="text-xl">This. Is. Greggory.</h1>
 
-      <button type="button" onClick={updateRooms}>Update</button>
+          <button type="button" onClick={updateRooms}>
+            Update
+          </button>
 
-      <br/>
+          <br />
 
-      <p>Current room: {room}</p>
-      <div className="flex items-center space-x-3">
-        <Button onClick={createRoom}>Create</Button>
-        <Button onClick={joinRoom}>Join</Button>
+          <p>Current room: {room}</p>
+          <div className="flex items-center space-x-3 justify-center  ">
+            <Button onClick={createRoom}>Create</Button>
+            <Button onClick={joinRoom}>Join</Button>
+          </div>
+        </div>
       </div>
     </Fragment>
   );

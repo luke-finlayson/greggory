@@ -5,7 +5,9 @@ module.exports = {
     "./src/**/*.{html,ts,tsx}"
 ],
   theme: {
-    extend: {},
+    extend: {colors:{
+      "gregory-pink-0": "#EFCEFA85"
+    }},
   },
   plugins: [],
 }
